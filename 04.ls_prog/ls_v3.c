@@ -61,13 +61,13 @@ void show_stat_info(char *fname,struct stat *buf){
 
     mode_to_letters(buf->st_mode,modestr);
 
-    printf("    mode    :   %s\n",modestr);
-    printf("    links   :   %d\n",buf->st_nlink);
-    printf("    user    :   %s\n",uid_to_name(buf->st_uid));
-    printf("    group   :   %s\n",gid_to_name(buf->st_gid));
-    printf("    size    :   %d\n",buf->st_size);
-    printf("    modtime :   %s",4+ctime(&buf->st_mtime));
-    printf("    name    :   %s\n",fname);
+    printf("%s",modestr);
+    printf("%4d ",buf->st_nlink);
+    printf("%-8s ",uid_to_name(buf->st_uid));
+    printf("%-8s ",gid_to_name(buf->st_gid));
+    printf("%8ld ",buf->st_size);
+    printf("%.12s ",4+ctime(&buf->st_mtime));
+    printf("%s\n",fname);
 }
 void mode_to_letters(int mode,char str[])
 {
