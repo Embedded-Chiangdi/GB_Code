@@ -12,4 +12,4 @@ explain how to run this
 
 ## Contributing
 # Author
--  _jiang di_
+-  *jiang di*
