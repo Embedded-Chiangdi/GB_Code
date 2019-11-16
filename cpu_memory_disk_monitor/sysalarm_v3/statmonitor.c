@@ -37,7 +37,7 @@ int read_config_gate(char *file_path,int *gate_switch,float *gate_value);
 char check_disk_error();
 char compare_gate_value(float gate_value,float check_value);
 int check_stat(int item,char *state,char *enable,float check_value);
-int alarm_info_create(int item,char check_value);
+int alarm_info_create(int item,float check_value);
 typedef struct check_info{
     //float value_cpu;
     float value_mem;
@@ -144,7 +144,7 @@ int main(int argc,char *argv[])
 
     return 0;
 }
-int alarm_info_create(int item,char check_value){
+int alarm_info_create(int item,float check_value){
 
     FILE *fp;
     char file_name[256];

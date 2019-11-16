@@ -11,10 +11,10 @@
 
 #define BUF_SIZE 64
 #define MAIL_BUF_SIZE 128
-#define HOSTIP_DEVICE "ens33"
+#define HOSTIP_DEVICE "eth0"
 #define DEFAULT_MAIL "wlan-support@gbcom.com.cn"
-#define MAIL_CONFIG_FILE "mail_user.txt"
-#define ALARM_DIR "/home/jiangdi/GB_Code/cpu_memory_disk_monitor/test"
+#define MAIL_CONFIG_FILE "/config/mail_user.txt"
+#define ALARM_DIR "/config/alarm_dir"
 
 
 // #define CPU_WARN_TAG "/config/CPU_WARN.tag"
@@ -52,7 +52,7 @@ int main (int argc, const char * argv[]) {
     printf("\n");
     //fflush(stdout);
     // mail_alarm_file_check(ALARM_DIR,ip_address,mail_address);
-    // return 0;
+    //return 0;
 
      while(1)
      {
@@ -151,7 +151,9 @@ int get_mail_address(char *buf)
         return 1;
         //exit(1);
     }
-    fscanf(fp,"%s",buf);
+    fgets(buf,MAIL_BUF_SIZE,fp);
+    buf[strlen(buf)-1]='\0';
+    //fscanf(fp,"%s",buf);
     fclose(fp);
     return 0;
 }
