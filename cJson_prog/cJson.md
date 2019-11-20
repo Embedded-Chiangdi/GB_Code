@@ -24,6 +24,11 @@ In JSON, they take on these forms:
 *** 
 #### Reference Reading 参考阅读
 * [Introducing JSON](http://www.json.org/)
+* [cJson 源码分析](https://blog.csdn.net/yzhang6_10/article/details/51615089)
 * [cjson 源码阅读笔记](http://github.tiankonguse.com/blog/2014/12/18/cjson-source.html)
 * [cJson 源码分析](http://www.0xffffff.org/2014/02/10/29-cjson-analyse/)
+* [cJson 源码分析 CSDN](https://blog.csdn.net/yzhang6_10/article/details/51615089)
+* [cJSON 库源码分析](http://www.0xffffff.org/2014/02/10/29-cjson-analyse/)
+* [【源码分析】cJSON库学习](http://www.voidcn.com/article/p-rynqxrhz-e.html)
+* [cJSON 使用详解](https://www.cnblogs.com/catgatp/p/6379955.html)
 ***
