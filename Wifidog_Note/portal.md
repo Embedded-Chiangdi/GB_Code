@@ -58,3 +58,7 @@ User-Agent: CaptiveNetworkSupport-355.270.2 wispr\r\n
 * [Solving the Captive Portal Problem on iOS](https://medium.com/@rwbutler/solving-the-captive-portal-problem-on-ios-9a53ba2b381e)
 * [Apple's secret "wispr" request](https://blog.erratasec.com/2010/09/apples-secret-wispr-request.html#.Xed3N-gzaHs)
 * [portal认证的几种实现方式](http://cxd2014.github.io/2017/05/21/portal-auth/)
+* [Using iptables and PHP to create a captive portal](https://wiki.andybev.com/doku.php?id=using_iptables_and_php_to_create_a_captive_portal)
+* [Nodogsplash](https://github.com/nodogsplash/nodogsplash)
+* [Welcome to Nodogsplash’s documentation!](https://nodogsplashdocs.readthedocs.io/en/stable/)
+* [CoovaChilli](https://coova.github.io/CoovaChilli/)
