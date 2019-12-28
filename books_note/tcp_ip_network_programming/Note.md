@@ -195,6 +195,113 @@ int accept(int sock, struct sockaddr *addr,socklen_t *addrlen);
 
 
 Accept函数受理连接请求等待队列中等待处理的客户端连接请求。函数调用成功时，返回套接字描述符。
+## UDP 
+### Base on UDP I/O function
+```c
+#include <sys/socket.h>
+ssize_t sendto(int sock, void *buff,size_t nbytes, int flags, struct sockaddr *to,socklen_t addrlen);
+```
+>sock 用于传输数据的UDP套接字文件描述符
+>buff 保存待传输数据的缓冲地址值
+>nbytes 待传输的数据长度，以字节为单位
+>flags 可选项参数
+>to     存有目标地址信息的sockaddr结构体变量的地址值
+>addrlen 传递给参数to的地址值结构体变量长度
+
+***
+```c
+#include <sys/socket.h>
+ssize_t recvfrom(int sock, void *buff, size_t nbytes, int flags, struct sockaddr *from, socklen_t *addrlen);
+```
+>sock 用于传输数据的UDP套接字文件描述符
+>buff 保存待传输数据的缓冲地址值
+>nbytes 待传输的数据长度，以字节为单位
+>flags 可选项参数
+>from   存有发送端地址信息的sockaddr结构体变量的地址值
+>addrlen 传递给参数from的地址值结构体变量长度
+
+***
+以上，是编写UDP程序最为核心的部分。
+### Create connected Socket
+```c
+sock = socket(PF_INET, SOCK_DGRAM,0);
+memset(&adr,0,sizeof(adr));
+adr.sin_family=AF_INET;
+addr.sin_addr.s_addr=./././.
+addr.sin_port=....
+connect(sock,(struct sockaddr *)&adr,sizeof(adr));//This is very important
+```
+
+
+# Part III
+## Closed TCP/UDP connections
+### Half closed connection
+```c
+#include <sys/socket.h>
+int shutdown(int sock,int howto);
+```
+>sock 需要断开的套接字文件描述符
+>howto 传递端口方式信息
+>>SHUT_RD   断开输入流
+>>SHUT_WR   断开输出流
+>>SHUT_RDWR 同时端口I/O流
+
+
+## Domain 
+### Get ip by domain
+```c
+#include <netdb.h>
+struct hostent *gethostbyname(const char *hostname);
+
+struct hostent{
+    char * h_name; //official name
+    char **h_aliases;//alias list
+    int h_addrtype;//host address type
+    int h_length; //address length
+    char **h_addr_list;//address list
+}
+```
+>h_name 官方域名
+>h_aliases  其他域名
+>h_addrtype IP地址族信息
+>h_length   IP地址长度
+>h_addr_list
+
+### Get domain by ip
+```c
+#include <netdb.h>
+struct hostent *gethostbyaddr(const char *addr, socklen_t len, int family);
+```
+>addr   含有IP地址信息
+>len    第一个参数传递的地址信息的字节数，若为IPv4时为4，IPv6时为16.
+>family 传递地址族信息，IPv4时为AF_INET，IPv6为AF_INET6
+
+## Socket Options
+```c
+#include <sys/socket.h>
+int getsocketopt(int sock, int level, int optname,void * optval, socklen_t *optlen);
+```
+>sock       用于查看选项套接字文件描述符
+>level      要查看的可选项的协议层
+>optname    要查看的可选项名
+>optval     保存查看结果的缓冲地址
+>optlen     向第四个参数optval传递的缓冲大小。调用函数后，该变量中保存通过第四个参数返回的可选项信息的字节数
+
+```c
+#include <sys/socket.h>
+int setsocketopt(int sock, int level, int optname, const void *optbal, socklen_t optlen);
+```
+>sock       用于查看选项套接字文件描述符
+>level      要查看的可选项的协议层
+>optname    要查看的可选项名
+>optval     保存查看结果的缓冲地址
+>optlen     向第四个参数optval传递的缓冲大小。调用函数后，该变量中保存通过第四个参数返回的可选项信息的字节数
+
+```
+optlen=sizeof(option);
+option=TRUE;
+setsockopt(serv_sock, SOL_SOCKET,SO_REUSEADDR,(void *)&option,optlen);
+```
 
 # Reference
 [Lec 26: Socket Addressing and Client Socket Programming](https://www.usna.edu/Users/cs/aviv/classes/ic221/s16/lec/26/lec.html#orgheadline1)
