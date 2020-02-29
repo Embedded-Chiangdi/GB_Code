@@ -3,11 +3,6 @@
 ## A Quick Reference
 ### Server
 ```c
-#include <sys/socket.h>
-int socket(int domiain, int type, int protocol);
-int bind(int sockfd, struct sockaddr *myaddr, soclen_t addrlen);
-int listen(int sockfd, int backlog);
-int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
 /*
 Create a Server
 Step one : creat socket fd
@@ -15,16 +10,22 @@ Step two : bind socket with allocating ip address and port
 Step three : enter listen state to monitor net connections
 Step four : accept connection and have some opreation on it
 */
+#include <sys/socket.h>
+int socket(int domiain, int type, int protocol);
+int bind(int sockfd, struct sockaddr *myaddr, soclen_t addrlen);
+int listen(int sockfd, int backlog);
+int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
 ```
 ### Client
 ```c
-#include <sys/socket.h>
-int connect(int sockfd, struct sockaddr *serv_addr, socklen_t addrlen);
 /*
 Create a Client
 Step one : creat a socket fd
 Step two : connect to server which you wanna to connected and do opreations
 */
+#include <sys/socket.h>
+int connect(int sockfd, struct sockaddr *serv_addr, socklen_t addrlen);
+
 ```
 
 # Part II
@@ -33,6 +34,8 @@ As we have mentioned before, Create a scoket use a function called `socket(int d
 ```c
 #include <sys/socket.h>
 int socket(int domiain, int type, int protocol);
+
+socket(PF_INET,SOCK_STREAM,0);
 ```
 
 ***
@@ -42,6 +45,7 @@ int socket(int domiain, int type, int protocol);
 ***
 
 ### Protocol Family
+
 * `PF_INET` IPv4(Used Most)
 * `PF_INET6` IPv6
 * `PF_LOCAL` 本地通信UNIX协议族
@@ -59,6 +63,8 @@ int socket(int domiain, int type, int protocol);
 * 传输存在数据边界
 * 每次传输的数据大小有限制
 ## Allocat IP Address and Port
+IPv4 结构体
+通常IP地址由4个字节（32）位组成。
 ```c
 struct sockaddr_in{
     sa_family_t sin_family; //Protocol Family
@@ -71,10 +77,22 @@ struct in_addr{
 }
 ```
 ***
+结构体成员sockaddr_in的成员分析：
 >sin_family
 * AF_INET   IPv4网络协议中使用的地址族
 * AF_INET6  IPv6网络协议中使用的地址族
 * AF_LOCAL  本地通信采用的UNIX协议的地址族
+
+***
+>sin_port
+16位的端口号。重点在于网络字节序的处理（大小端）
+***
+>sin_addr
+同来保存4字节的IP地址信息，也以网络字节顺序保存。
+***
+>sin_zero
+无特殊意义，只是为了使得结构体sockaddr_in 与 sockaddr结构体保持一致而插入的成员。
+
 ***
 ```c
 struct sockaddr_in serv_addr;
@@ -87,8 +105,9 @@ struct sockaddr{
     char sa_data[14];
 }
 ```
+
 ## Endian Conversions(字节序转换) and Network Endian(网络字节序)
-In gernal, There are big endian and little endian in computer world for bytes transmission. Most of inters micro-crontroller are based on little endian. but netwrok transsission is big endian. So we should do endian conversions before  fill stuff in `sockaddr_in`.  
+In gernal, There are big endian and little endian in computer world for bytes transmission. Most of inters micro-crontroller are based on little endian. but netwrok transsission is big endian. So we should do endian conversions before  fill stuff to `sockaddr_in`.  
 There are some functions help us to do so:
 ```c
 //h stand for “host” in htons
@@ -168,6 +187,7 @@ addr.sin_family=AF_INET;
 addr.sin_addr.s_addr=inet_addr(serv_ip);
 addr.sin_port=htons(atoi(serv_port));
 ```
+
 Server netwrok address init
 ```c
 struct sockaddr_in addr;
@@ -177,6 +197,7 @@ addr.sin_family=AF_INET;
 addr.sin_addr.s_addr=htonl(INADR_ANY);
 addr.sin_port=htons(atoi(serv_port));
 ```
+
 ## Achieve of Server
 ```c
 #include <sys/socket.h>
@@ -196,6 +217,10 @@ int accept(int sock, struct sockaddr *addr,socklen_t *addrlen);
 
 Accept函数受理连接请求等待队列中等待处理的客户端连接请求。函数调用成功时，返回套接字描述符。
 ## UDP 
+UDP并非每次都快于TCP，TCP比UDP慢得原因主要有以下几点：
+1. 收发数据前后进行的连接设置及清楚过程
+2. 收发数据过程中为保证可靠性而添加的流控制
+
 ### Base on UDP I/O function
 ```c
 #include <sys/socket.h>
@@ -229,7 +254,8 @@ memset(&adr,0,sizeof(adr));
 adr.sin_family=AF_INET;
 addr.sin_addr.s_addr=./././.
 addr.sin_port=....
-connect(sock,(struct sockaddr *)&adr,sizeof(adr));//This is very important
+connect(sock,(struct sockaddr *)&adr,sizeof(adr));
+//This is very important
 ```
 
 
