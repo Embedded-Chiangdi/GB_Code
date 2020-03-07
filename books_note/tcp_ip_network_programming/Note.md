@@ -333,3 +333,4 @@ setsockopt(serv_sock, SOL_SOCKET,SO_REUSEADDR,(void *)&option,optlen);
 
 # Reference
 [Lec 26: Socket Addressing and Client Socket Programming](https://www.usna.edu/Users/cs/aviv/classes/ic221/s16/lec/26/lec.html#orgheadline1)
+* [Network Interface Guide](https://docs.oracle.com/cd/E19455-01/806-1017/index.html)
