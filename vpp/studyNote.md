@@ -29,16 +29,42 @@ cd /vpp/buil-root
 rpm -ivh *.rpm
 ``
 ## VPP应用
+### VPP的配置
+绑定网口
+```s
+#Get pci address 
+lshw -c network -businfo
+lspci -m
+```
+将获取的PCI网口ID写入startup.conf 文件。
 ### VPP应用基础
 参考连接：[VPP BASSIC](https://wiki.fd.io/view/VPP/Progressive_VPP_Tutorial)  
 #### prepare
-#### Lab1 
+```
+vpp unix {cli-listen /run/vpp/cli-vpp1.sock} api-segment {prefix vpp1}
+```
+* `api-segment {prefix vpp1}` indicate how to name the files in /dev/shm for our vpp
+* `unix {cli-listen /run/vpp/cli-vpp1.sock} ` tells vpp to use a non-default socket file when being addressed by vppctl.
+
+Using vppctl to send commands to vpp
+```
+vppctl command
+vppctl show ver
+```
+
+#### Lab1  Create an Interface
+Example of how to create a host interface tied to one side of an existing linux veth pair named vpp1, and enable the interface.
 ```s
+#Create a veth interface with one end name vpp1out and the other named vpp1host
 ip link add name vpp1out type veth peer name vpp1host
+#turn up both ends
 ip link set dev vpp1out up
 ip link set dev vpp1host up
+#Assign an IP address
 ip addr add 10.10.1.1/24 dev vpp1host
+#Display an IP address 
 ip addr show vpp1host
+
 #Create vpp host-interface
 create host-interface name vpp1out
 #confirm the interface
@@ -51,6 +77,10 @@ show int
 set int ip address host-vpp1out 10.10.1.2/24
 #confirm ip address is assigned
 show int addr
+
+
+
+
 # Examine Trace of ping 
 trace add af-packet-input 10
 ping  10.10.1.1
@@ -63,10 +93,14 @@ show ip arp
 show ip fib
 ```
 
+
+
+
 #### Lab2 
 ```s
 #create memif interface on vpp1
 create interface memif id 0 master
+#Above command will create an interface on vpp1 memif0/0 using /run/vpp/memif as its socket file.
 #set the memif0/0 state to up
 set  int state memif0/0 up
 #assign the ip address 10.10.2.1/24 to memif0/0
@@ -157,6 +191,7 @@ create loopback interface
 set int address loop0 10.10.1.2/24
 set int state loop0 up
 #Configure Bridge Domain on vpp2
+
 set int l2 bridge loop0 1 bv1
 set int l2 bridge host-vpp2vpp1 1
 show bridge-domain 1 detail
@@ -165,6 +200,81 @@ show bridge-domain 1 detail
 show l2fib verbose
 ```
 #### Lab6 NAT
+```s
+
+ip link add name vpp1outside type veth peer name vpp1outsidehost
+ip link set dev vpp1outside up
+ip link set dev vpp1ooutsidehost up
+ip addr add 10.10.1.1/24 dev vpp1outsidehost
+ip addr show vpp1outsidehost
+
+```
+
+### VPP Packet Tracing
+```
+trace add dpdk-input 10
+trace add af-packet-input 10
+show trace
+```
+
+### VPP Memory Usage
+```
+show memory verbose
+show run
+```
+## Useful Debug CLI
+### Interface command
+[Here](https://fd.io/docs/vpp/v2001/reference/cmdreference/index.html)
+#### Basic Interface command
+```
+show interface
+show bridge-domain 
+show hardware-interface
+```
+#### Create Interface command
+```
+vpp# create host-interface name vpp1
+host-vpp1
+
+vpp# set interface state host-vpp1 up
+
+
+create loopvack interface
+
+```
+#### Set interface command
+```
+set interface ip address vpp1 10.1.1.1/24
+set interface ip address del vpp1 
+
+
+set interface l2 bridge vpp1 2
+//where 2 is the bridge-domain-id
+
+set interface l2 bridge vpp1 2 bvi
+```
+### Ip Command
+#### ip route
+```
+ip route add 10.1.1.0/24 via 10.1.2.2
+ip route del 10.1.1.0/24 via 10.1.2.2
+```
+#### ping
+#### set ip address
+#### show ip arp
+```
+show ip arp
+```
+#### show ip fib
+```
+show ip fib
+```
+### Snow Command
+#### show l2fib
+```
+show l2fib
+```
+
 
 ## Reference 参考链接
 * [Build a Fast Network Stack with Vector Packet Processing (VPP) on an Intel® Architecture Server](https://software.intel.com/en-us/articles/build-a-fast-network-stack-with-vpp-on-an-intel-architecture-server)
@@ -175,4 +285,4 @@ show l2fib verbose
 * [于洋的博客](https://www.cnblogs.com/scottieyuyang/default.html?page=1)
 * [VPP/DPDK使用](https://blog.csdn.net/shaoyunzhe/category_6538239.html)
 * [VPP性能之一](https://blog.csdn.net/weixin_42265069/article/details/85780560#cache_5)
-* []()
+* [VPP环境搭建](http://www.isimble.com/2018/11/15/vpp-setup/)
