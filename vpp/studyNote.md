@@ -1,4 +1,121 @@
 # VPP 学习笔记
+## 基础知识
+### 桥
+A network bridge is a Link Layer device which forwards traffic between networks based on MAC addresses and is therefore also referred to as a Layer 2 device.It makes forwarding decisions based on tables of MAC addresses which it builds by learning what hosts are connected to each network. A software bridge can be used within a Linux host in order to emulate a hardware bridge, for example in virtualization applications for sharing a NIC with one or more virtual NICs.
+#### Creating a btidge
+manage a  network bridge using the ip tool from iproute2 package.
+```s
+#create a new bridge and change its state to up 
+ip link add name $bridge_name type bridge
+ip link set $bridge_name up
+#add an interfcae into the bridge, its state must up
+ip link set eth0 up
+ip link set eth0 master $bridge_name
+#show the existing bridges and associated interfaces
+bridge link
+#remove an interface from a bridge 
+ip link set eth0 nomaster
+#delete a bridge issue 
+ip link delete $bridge_name type  bridge
+#assign an ip address 
+ip addr add dev bridge_name 172.16.17.1
+```
+***
+manage a network bridge using the legacy brctl tool.
+```s
+#create a new bridge:
+brctl addbr btidge_name
+#dele a bridge
+brctl delbr bridge_name
+#add a device to a bridge fow exaple eth0
+brctl addif bridge_name eth0
+#show current bridges and what interfaces they are connected to:
+brctl show
+
+ip link set dev bridge_name up
+
+```
+Attaching an IP address to a bridge device is only necessary if you want to orignate, or receive IP traffic on that interface. If you are merely using your two NICs as a repeater (of sorts) then you shouldn't need an IP address.
+#### Ref:
+1. [networking:bridge [Wiki]](https://wiki.linuxfoundation.org/networking/bridge)
+2. [microHOWTO: Bridge traffic between two or more Ethernet interfaces on Linux](http://www.microhowto.info/howto/bridge_traffic_between_two_or_more_ethernet_interfaces_on_linux.html)
+3. [Why do we need an IP address for a bridge?](https://askubuntu.com/questions/407828/why-do-we-need-an-ip-address-for-a-bridge)
+### 路由
+In computer networking, a router is a device responsible for forwarding network traffic. When datagrams arrive at a router, the router must determine the best way to route them to their destination.
+#### Linux route command
+```s
+# show route
+route -n 
+# add route
+route add -net 192.168.2.0 netmask 255.255.255.0 dev eth0
+# add a default gateway
+route add default gw 192.168.1.10
+# block a host run
+route add -host 192.168.1.19 reject
+
+```
+#### Ref
+1. [Linux route command](https://www.computerhope.com/unix/route.htm)
+2. [An introduction to Linux network routing](https://opensource.com/business/16/8/introduction-linux-network-routing)
+3. [7 Linux Route Command Examples (How to Add Route in Linux)](https://www.thegeekstuff.com/2012/04/route-examples/)
+4. [Understanding Routing table entry](https://stackoverflow.com/questions/8599424/understanding-routing-table-entry)
+5. [route command output](https://stackoverflow.com/questions/36515518/route-command-output)
+### NAT
+#### Basic
+#### Reference
+1. (NAT - Network Address Translation)[https://www.karlrupp.net/en/computer/nat_tutorial]
+2. ()[]
+### VLAN
+#### Config VLan
+##### Method 1
+```s
+cp /etc/sysconfig/network-scripts-eth0 /etc/sysconfig/network-scripts-eth0.5
+vi /ets/sysconfig/network-scripts/ifcfg-eth0.5
+
+#Replcae follow Items
+Device=eth0.5
+VLAN=yes
+
+
+``` 
+##### Method 2 
+```s
+vconfig add eth0 5
+ifconfig eth0.5 192.168.1.100 netmask 255.255.255.0 broadcase 192.168.1.255 up
+
+#Get detail information about VLAN interface
+cat /proc/net/vlan/eth0.5
+#Dele VLAN interface
+ifconfig eth0.5
+vconfig rem eth0.5
+```
+##### Method 3
+```s
+ip link add  link eth0 name eth0.5 type vlan id 5
+ip link
+ip -d link show eth0.5
+ip addr add 192.168.1.200/24 brd 192.168.1.255 dev eth0.5
+#Remove Vlan id
+ip link set dev eth0.5 up
+ip link set dev eth0.5 down 
+ip link delete eth0.5
+```
+
+#### Reference 
+1. (HowTo: Configure Linux Virtual Local Area Network (VLAN))[https://www.cyberciti.biz/tips/howto-configure-linux-virtual-local-area-network-vlan.html]
+2. 
+### 端口聚合
+The Linux bonding driver provides a method for aggregating multiple network interfaces into a single logical “bonded” interface. 
+```s
+#Querying Bonding Configuration
+cat /proc/net/bonding
+```
+#### Reference
+1. [Basics of Ethernet Bonding in Linux](https://www.thegeekdiary.com/basics-of-ethernet-bonding-in-linux/)
+### ACL
+
+### 流控
+
 ## 入门学习目标
 VPP本身只是包处理加速框架，后来基于这个框架才构建的用户态网络协议栈。先了解用户态网络协议栈技术。然后再了解VPP向量包处理技术。
 ## 简述
@@ -7,7 +124,8 @@ VPP本身只是包处理加速框架，后来基于这个框架才构建的用�
 ```shell
 //Get the newest version of VPP sources code
 git clone https://gerrit.fd.io/r/vpp
-#git clone -b stable/1908 https://github.com/FDio/vpp.git
+#
+git clone -b stable/1908 https://github.com/FDio/vpp.git
 cd vpp
 
 //Make sure there are no FD.io VPP or DPDK packages
@@ -35,6 +153,12 @@ rpm -ivh *.rpm
 #Get pci address 
 lshw -c network -businfo
 lspci -m
+```
+
+驱动导入
+```
+modprobe uio_pci_generic
+modprobe igb_uio
 ```
 将获取的PCI网口ID写入startup.conf 文件。
 ### VPP应用基础
@@ -286,3 +410,4 @@ show l2fib
 * [VPP/DPDK使用](https://blog.csdn.net/shaoyunzhe/category_6538239.html)
 * [VPP性能之一](https://blog.csdn.net/weixin_42265069/article/details/85780560#cache_5)
 * [VPP环境搭建](http://www.isimble.com/2018/11/15/vpp-setup/)
+* [赵占旭](https://zhaozhanxu.com/archives/page/8/)
