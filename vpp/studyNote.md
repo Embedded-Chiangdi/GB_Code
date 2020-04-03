@@ -40,6 +40,7 @@ Attaching an IP address to a bridge device is only necessary if you want to orig
 1. [networking:bridge [Wiki]](https://wiki.linuxfoundation.org/networking/bridge)
 2. [microHOWTO: Bridge traffic between two or more Ethernet interfaces on Linux](http://www.microhowto.info/howto/bridge_traffic_between_two_or_more_ethernet_interfaces_on_linux.html)
 3. [Why do we need an IP address for a bridge?](https://askubuntu.com/questions/407828/why-do-we-need-an-ip-address-for-a-bridge)
+4. [Linux Bridge - Part 1](https://hechao.li/2017/12/13/linux-bridge-part1/)
 ### 路由
 In computer networking, a router is a device responsible for forwarding network traffic. When datagrams arrive at a router, the router must determine the best way to route them to their destination.
 #### Linux route command
@@ -112,6 +113,11 @@ cat /proc/net/bonding
 ```
 #### Reference
 1. [Basics of Ethernet Bonding in Linux](https://www.thegeekdiary.com/basics-of-ethernet-bonding-in-linux/)
+
+### TUN/TAP Interface
+
+### Veth Interface
+
 ### ACL
 
 ### 流控
@@ -133,7 +139,7 @@ rpm -q vpp
 rpm -q DPDK
 
 //Build VPP Dependencies
-make install-dep -y
+make install-dep 
 
 //Build VPP Release Version
 make build-release
@@ -191,19 +197,7 @@ ip addr show vpp1host
 
 #Create vpp host-interface
 create host-interface name vpp1out
-#confirm the interface
-show hardware
-#Turn up thr interface
-set int state host-vpp1out up
-#confirm the interface is up
-show int
-#Assign ip adddress to interface
-set int ip address host-vpp1out 10.10.1.2/24
-#confirm ip address is assigned
-show int addr
-
-
-
+    
 
 # Examine Trace of ping 
 trace add af-packet-input 10
@@ -312,7 +306,7 @@ quit
 vppctl -s /run/vpp/cli-vpp2.sock
 create loopback interface
 #loop0
-set int address loop0 10.10.1.2/24
+set int ip address loop0 10.10.1.2/24
 set int state loop0 up
 #Configure Bridge Domain on vpp2
 
@@ -367,6 +361,7 @@ create loopvack interface
 
 ```
 #### Set interface command
+set interface IP address and bridge
 ```
 set interface ip address vpp1 10.1.1.1/24
 set interface ip address del vpp1 
@@ -376,6 +371,9 @@ set interface l2 bridge vpp1 2
 //where 2 is the bridge-domain-id
 
 set interface l2 bridge vpp1 2 bvi
+set interface l3 vpp1
+
+
 ```
 ### Ip Command
 #### ip route
@@ -400,6 +398,9 @@ show l2fib
 ```
 
 
+
+
+
 ## Reference 参考链接
 * [Build a Fast Network Stack with Vector Packet Processing (VPP) on an Intel® Architecture Server](https://software.intel.com/en-us/articles/build-a-fast-network-stack-with-vpp-on-an-intel-architecture-server)
 * [Vector Packet Processor Documentation](https://buildmedia.readthedocs.org/media/pdf/my-vpp-docs/building-vpp/my-vpp-docs.pdf)
@@ -411,3 +412,4 @@ show l2fib
 * [VPP性能之一](https://blog.csdn.net/weixin_42265069/article/details/85780560#cache_5)
 * [VPP环境搭建](http://www.isimble.com/2018/11/15/vpp-setup/)
 * [赵占旭](https://zhaozhanxu.com/archives/page/8/)
+* [编译安装VPP及运行(虚拟机环境)](https://blog.csdn.net/turbock/article/details/100578117)
