@@ -128,7 +128,7 @@ VPP本身只是包处理加速框架，后来基于这个框架才构建的用�
 ## 编译&安装
 基于Centos7
 ```shell
-//Get the newest version of VPP sources code
+#Get the newest version of VPP sources code
 git clone https://gerrit.fd.io/r/vpp
 #
 git clone -b stable/1908 https://github.com/FDio/vpp.git

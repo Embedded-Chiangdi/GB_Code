@@ -95,6 +95,11 @@ int main(int argc,char *argv[])
     //float mem_ocu,disk_ocu;
 
 
+    float used;
+    used = get_memory_rate();
+    printf("mem ocu is %.2f\n",used);
+    return 0;
+
     memset(&saState,0,sizeof(warn_stat_arrary));
 	//read switch and gate value
     read_config_gate(CONFIG_GATE_MEM,&saSwitch.mem_switch,&g_info.value_mem);
@@ -313,17 +318,27 @@ float get_memory_rate(){
     FILE *f1;
     char c_name[10];
     char d_name[10];
-    int mem_total,mem_free;
-    f1=fopen("/proc/meminfo","r");
+    int mem_total,mem_free,mem_bc,temp;
+    system(" cat /proc/meminfo | grep -wE \"MemTotal|MemFree|Buffers|Cached|SReclaimable\" > /tmp/meminfo ");
+    f1=fopen("/tmp/meminfo","r");
     if(f1 == NULL)
     {
         perror("file open failed\n");
         exit(1);
     }
+    mem_bc=0;
+    printf("mem_bc =%d\n",mem_bc);
     fscanf(f1,"%s\t%d\t%s",c_name,&mem_total,d_name); 
     fscanf(f1,"%s\t%d\t%s",c_name,&mem_free,d_name);
+
+    fscanf(f1,"%s\t%d\t%s",c_name,&temp,d_name);
+    mem_bc=mem_bc+temp;
+    fscanf(f1,"%s\t%d\t%s",c_name,&temp,d_name);
+    mem_bc=mem_bc+temp;
+    fscanf(f1,"%s\t%d\t%s",c_name,&temp,d_name);
+    mem_bc=mem_bc+temp;
     fclose(f1);
-    return ((mem_total - mem_free)*100.0)/mem_total;
+    return ((mem_total - mem_free -mem_bc)*100.0)/mem_total;
     
 }
 
