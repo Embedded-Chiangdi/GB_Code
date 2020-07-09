@@ -1,43 +1,51 @@
-#include "stdio.h"
-#include "unistd.h"
-#include "sys/types.h"
-#include "sys/stat.h"
-#include "fcntl.h"
-#include "stdlib.h"
-#include "string.h"
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <string.h>
 
-static char userdata[]= "user data !";
+/*
+ * ./hello_drv_test -w abc
+ * ./hello_drv_test -r
+ */
+int main(int argc, char **argv)
+{
+	int fd;
+	char buf[1024];
+	int len;
+	
+	/* 1. 判断参数 */
+	if (argc < 2) 
+	{
+		printf("Usage: %s -w <string>\n", argv[0]);
+		printf("       %s -r\n", argv[0]);
+		return -1;
+	}
 
-int main(int argc, char *argv){
-    int fd;
-    int ret;
-    char filename[20] = "/dev/charDev";
-    char readbuf[50]= {0};
-    char writebuf[50]= {0};
+	/* 2. 打开文件 */
+	fd = open("/dev/chardev", O_RDWR);
+	if (fd == -1)
+	{
+		printf("can not open file /dev/hellodev\n");
+		return -1;
+	}
 
-    
-    if((fd = open(filename,O_RDWR)) < 0){
-        printf("Cannot open file %s",filename);
-        return -1;
-    }
-
-
-        if((ret = read(fd,readbuf,50)) < 0){
-            printf("read file %s failed!\r\n",filename);
-        }
-        else{
-            printf("read data :%s\r\n",readbuf);
-            }
-   
-    
-       
-        memcpy(writebuf,userdata,sizeof(userdata));
-        if((ret = write(fd,readbuf,50)) < 0)
-            printf("write file %s failed!\r\n",filename);
-     
- 
-    
-    close(fd);
-    printf("close\r\n");
-    return 0;
+	/* 3. 写文件或读文件 */
+	if ((0 == strcmp(argv[1], "-w")) && (argc == 3))
+	{
+		len = strlen(argv[2]) + 1;
+		len = len < 1024 ? len : 1024;
+		write(fd, argv[2], len);
+	}
+	else
+	{
+		len = read(fd, buf, 1024);		
+		buf[1023] = '\0';
+		printf("APP read : %s\n", buf);
+	}
+	
+	close(fd);
+	
+	return 0;
 }
