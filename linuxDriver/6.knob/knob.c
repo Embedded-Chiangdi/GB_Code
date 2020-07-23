@@ -21,6 +21,8 @@
 #define knob_CLASS_NAME "knob_class"
 #define knob_COUNT 1
 
+#define MIN(a, b) (a < b ? a : b)
+#define KERNEL_BUF_LEN 100
 struct knob_Dev {
     dev_t knobDevId;
     struct cdev knobCdev;
@@ -32,9 +34,14 @@ struct knob_Dev {
 
 struct knob_Dev knobDev; 
 
+char kernel_buf[KERNEL_BUF_LEN] = "0 1";
+
 static ssize_t knob_read  (struct file *filp, char __user *buf, size_t cnt, loff_t * offet) {
 
-    return knob_RETURN_SUCCESS;
+    int ret ;
+    ret = copy_to_user(buf,kernel_buf,MIN(cnt,KERNEL_BUF_LEN));
+
+    return ret;
 }
 static ssize_t knob_write (struct file *filp, const char __user *buf, size_t cnt, loff_t *offet){
 

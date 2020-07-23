@@ -5,5 +5,7 @@ PWD := $(shell pwd)
 obj-m := knob.o
 all:
 	make -C $(KERNDIR) M=$(PWD)  modules
+	gcc app.c -o test
 clean:
 	make -C $(KERNDIR) M=$(PWD) clean
+	rm test
