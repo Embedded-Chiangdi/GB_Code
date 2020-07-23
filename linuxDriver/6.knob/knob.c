@@ -34,11 +34,13 @@ struct knob_Dev {
 
 struct knob_Dev knobDev; 
 
-char kernel_buf[KERNEL_BUF_LEN] = "0 1";
+char kernel_buf[KERNEL_BUF_LEN] = "Test driver for knob";
 
 static ssize_t knob_read  (struct file *filp, char __user *buf, size_t cnt, loff_t * offet) {
 
     int ret ;
+    char test_chr = 1;
+
     ret = copy_to_user(buf,kernel_buf,MIN(cnt,KERNEL_BUF_LEN));
 
     return ret;
