@@ -130,10 +130,14 @@ static int platdev_remove(struct platform_device *dev){
 
     return 0;
 }
-
+static const struct of_device_id platdev_of_match[] = {
+        {.compatible = "platdevice-demo1"},
+        {/* Sentinel */}
+};
 static struct platform_driver platdev_dri = {
     .driver = {
-        .name = "platdevive"
+        .name = "platdevive", /* 驱动名字 */
+        .of_match_table = platdev_of_match, /*设备树匹配表*/
     },
     .probe = platdev_probe,
     .remove = platdev_remove,
