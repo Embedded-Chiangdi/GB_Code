@@ -27,6 +27,7 @@ static struct device *device_p;
 #define TYPE_KEY 'w'
 #define COMMAND_WF1 _IOWR(TYPE_KEY,1,unsigned long)
 #define COMMAND_WF2 _IOWR(TYPE_KEY,2,unsigned long)
+#define COMMAND_WF3 _IOWR(TYPE_KEY,3,unsigned long)
 
 static ssize_t dev_write(const void *buf,size_t count){
     int i , j;
@@ -53,6 +54,9 @@ static long wf_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
             break;
         case COMMAND_WF2:
                 printk("Enter COMMAND2 Program! \n");
+            break;
+        case COMMAND_WF3:
+                printk("Enter COMMAND3 Program! %ld\n",arg);
             break;
         default:
                 printk("No ops\n");

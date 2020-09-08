@@ -10,7 +10,7 @@
 #define TYPE_KEY 'w'
 #define COMMAND_WF1 _IOWR(TYPE_KEY,1,unsigned long)
 #define COMMAND_WF2 _IOWR(TYPE_KEY,2,unsigned long)
-
+#define COMMAND_WF3 _IOWR(TYPE_KEY,3,unsigned long)
 
 unsigned char buf_t[] = {
 0x00,0x00,0x00,0x00,0x00,0x00,0x80,0xC0,0xE0,0xF0,0xF0,0xE0,0xC0,0x80,0x00,0x00,
@@ -114,6 +114,11 @@ int main(int argc, char **argv){
     ret = ioctl(fd,COMMAND_WF2);
     if(ret < 0)
         goto err;
+
+    ret = ioctl(fd,COMMAND_WF3,1);
+    if(ret < 0)
+        goto err;
+    
     printf("Send ioctls success \n");
 
     close(fd);
