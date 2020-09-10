@@ -84,10 +84,14 @@ int main(int argc, char **argv){
     int fd;
     int ret = 0;
     int this_bytes_tx = 0;
+    int this_bytes_rx = 0;
+    char rx_bytes[1] = {0};
+    char ioarg = 0;
     printf("This is a Test APP\n");
 
 
-    fd = open(TESTDEV,O_WRONLY);
+    //fd = open(TESTDEV,O_WRONLY);
+    fd = open(TESTDEV,O_RDWR);
     if(fd < 0){
         ret = -1;
         printf("failed open %d",fd);
@@ -115,11 +119,26 @@ int main(int argc, char **argv){
     if(ret < 0)
         goto err;
 
-    ret = ioctl(fd,COMMAND_WF3,1);
+    ret = ioctl(fd,COMMAND_WF3,&ioarg);
     if(ret < 0)
         goto err;
     
+    printf("ioctl receive %d\n",ioarg);
+
     printf("Send ioctls success \n");
+
+
+    /* read test*/
+
+    this_bytes_rx = read(fd,rx_bytes,1);
+
+    ret = this_bytes_rx;
+
+    if(ret < 0){
+        printf("failed read %d\n",ret);
+        goto err;
+    }
+    printf("receive byte is %s\n",rx_bytes);
 
     close(fd);
 

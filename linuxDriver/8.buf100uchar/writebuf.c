@@ -47,7 +47,7 @@ static ssize_t dev_write(const void *buf,size_t count){
 static long wf_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 {
     int err = 0;
-
+    char ioarg = 1;
     switch(cmd){
         case COMMAND_WF1:
                 printk("Enter COMMAND1 Program! arg = %ld\n",arg);
@@ -56,7 +56,8 @@ static long wf_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
                 printk("Enter COMMAND2 Program! \n");
             break;
         case COMMAND_WF3:
-                printk("Enter COMMAND3 Program! %ld\n",arg);
+                printk("Enter COMMAND3 Program! ouput %d \n",ioarg);
+                put_user(ioarg,(char *)arg);
             break;
         default:
                 printk("No ops\n");
@@ -82,9 +83,16 @@ static ssize_t wf_read(struct file *filp, char __user *buf,
 			 size_t count, loff_t *f_pos)
 {
     int retval = 0;
+    char status[]="-1";
 
-
+    if(copy_to_user(buf,status,sizeof(status))){
+        retval = -1;
+        goto err;
+    }
     
+    printk("Read %d bytes\n",1);
+
+err:
     return retval;
 }
 static ssize_t wf_write(struct file *filp, const char __user *buf,
